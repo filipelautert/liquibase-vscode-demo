@@ -1,4 +1,8 @@
+import { log } from 'console';
 import * as vscode from 'vscode';
+
+export let licenseValidated = false;
+
 
 export async function prerequisites(context: vscode.ExtensionContext): Promise<boolean> {
 
@@ -42,22 +46,22 @@ export function checkLicenseKey() {
 				"--license-key=" + license + " connect";
 
 		const cp = require('child_process');
-		cp.exec(command, (err:string, stdout:string, stderr:string) => {
-			if (err) {
-				if (err.indexOf("invalid license")) {
+		cp.exec(command, (err:any, stdout:string, stderr:string) => {
+			if (err && err.code !== 0) {
+				if (err.message.indexOf("invalid license")) {
 					vscode.window.showErrorMessage("Please provide a valid license and restart the extension. ");
 					vscode.commands.executeCommand( 'workbench.action.openSettings', "liquibase.licensekey");
 					return;
 				} else {
 					vscode.window.showErrorMessage("Unknown error executing Liquibase. Please check log outputs and fix it.");
-					console.log(err);
+					log(err);
 				}
 			}
 
 			const idx = stderr.indexOf("Liquibase licensed to");
 			if (idx !== -1) {
 				vscode.window.showInformationMessage(stderr.substring(idx, stderr.indexOf("Success: ")));
-                config.update("liquibase.validated", true, true);
+                licenseValidated = true;
 			}
 		});
 }

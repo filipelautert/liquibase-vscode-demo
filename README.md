@@ -1,2 +1,2 @@
-# liquibase-license-demo README
+# liquibase-vscode-demo README
 

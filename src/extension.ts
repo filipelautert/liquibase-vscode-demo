@@ -1,11 +1,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { checkLicenseKey, prerequisites } from './settings';
+import { checkLicenseKey, licenseValidated, prerequisites } from './settings';
 
 // This method is called when the extension is activated
 export function activate(context: vscode.ExtensionContext) {
-	vscode.workspace.getConfiguration().update("liquibase.validated", false);
 
 	prerequisites(context).then(configured => {
 		if (!configured) {
@@ -16,8 +15,8 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	// The command has been defined in the package.json file
-	const disposable = vscode.commands.registerCommand('liquibase-license-demo.update', () => {
-		if (vscode.workspace.getConfiguration().get("liquibase.validated")) {
+	const disposable = vscode.commands.registerCommand('liquibase-vscode-demo.update', () => {
+		if (licenseValidated) {
 			vscode.window.showInformationMessage('Running liquibase update command...');
 		} else {
 			vscode.window.showErrorMessage('Liquibase license validation failed!');

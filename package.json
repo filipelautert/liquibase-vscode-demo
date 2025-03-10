@@ -1,11 +1,9 @@
 {
-  "name": "liquibase-license-demo",
-  "displayName": "liquibase-license-demo",
+  "name": "liquibase-vscode-demo",
+  "displayName": "liquibase-vscode-demo",
   "description": "Liquibase License Demo for DAT-19784",
   "version": "0.0.1",
-  "repository": {
-    ""
-  },
+  "repository":"https://github.com/filipelautert/liquibase-vscode-demo",
   "engines": {
     "vscode": "^1.97.2"
   },
@@ -19,7 +17,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "liquibase-license-demo.update",
+        "command": "liquibase-vscode-demo.update",
         "title": "Liquibase update"
       }
     ],
@@ -40,11 +38,6 @@
             "type": ["string"],
             "default": null,
             "description": "Liquibase PRO License key"
-        },
-        "liquibase.validated": {
-          "type": ["boolean"],
-          "default": false,
-          "description": "Is Liquibase License key valid?"
         }
       }
     }
