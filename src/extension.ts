@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
 		if (!configured) {
 			return;
 		}
-		checkLicenseKey();
+		checkLicenseKey(context);
 
 	});
 

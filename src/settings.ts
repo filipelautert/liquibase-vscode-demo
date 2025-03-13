@@ -33,7 +33,7 @@ export function findAndCheckSetting(config:vscode.WorkspaceConfiguration, key:st
 	}
 }
 
-export function checkLicenseKey() {
+export function checkLicenseKey(context: vscode.ExtensionContext) {
 	const config = vscode.workspace.getConfiguration();
 		const liquibaseHome = config.get("liquibase.home");
 		const javaHome = config.get("liquibase.javahome");
@@ -42,16 +42,17 @@ export function checkLicenseKey() {
 		vscode.window.showInformationMessage("Using liquibase " + liquibaseHome + " with java " + javaHome);
 		
 		const command = javaHome + "/bin/java -Dliquibase.home=" + liquibaseHome + 
-				" -jar " + liquibaseHome + "/internal/lib/liquibase-core.jar --url=jdbc:h2:mem:liquibase " +
-				"--license-key=" + license + " connect";
+				" -jar " + liquibaseHome + "/internal/lib/liquibase-core.jar --classpath=" + context.extensionPath 
+                + "/liquibase-license-checker-1.0.0-SNAPSHOT.jar " +
+				"--license-key=" + license + " licenseCheck";
 
 		const cp = require('child_process');
 		cp.exec(command, (err:any, stdout:string, stderr:string) => {
 			if (err && err.code !== 0) {
                 log(err.message);
-				if (err.message.indexOf("invalid license") !== -1) {
+				if (err.message.indexOf("requires a valid Liquibase Pro") !== -1) {
 					vscode.window.showErrorMessage("Please provide a valid license and restart the extension. ");
-					vscode.commands.executeCommand( 'workbench.action.openSettings', "liquibase.licensekey");
+					vscode.commands.executeCommand('workbench.action.openSettings', "liquibase.licensekey");
 					return;
 				} else {
 					vscode.window.showErrorMessage("Unknown error executing Liquibase. Please check log outputs and fix it.");
@@ -60,7 +61,7 @@ export function checkLicenseKey() {
 
 			const idx = stderr.indexOf("Liquibase licensed to");
 			if (idx !== -1) {
-				vscode.window.showInformationMessage(stderr.substring(idx, stderr.indexOf("Success: ")));
+				vscode.window.showInformationMessage(stderr.substring(idx, stderr.indexOf("Liquibase command")));
                 licenseValidated = true;
 			}
 		});
